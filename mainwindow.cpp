@@ -14,6 +14,8 @@
 
 #include <QString>
 #include <QFileDialog>
+#include <QFile>
+#include <QTextStream>
 //#include <vtkStringArray.h>
 #include <QDebug>
 MainWindow::MainWindow(QWidget *parent) :
@@ -120,13 +122,33 @@ void MainWindow::readPatientInformation(int position)
     std::cout<<"Read Patient Info"<<std::endl;
     itk::GDCMImageIO::Pointer dicomIO= itk::GDCMImageIO::New();
     ReaderType::Pointer readerInfoPatient=ReaderType::New();
-    std::cout<<arrayS->GetValue(position)<<std::endl;
+    //std::cout<<arrayS->GetValue(position)<<std::endl;
     readerInfoPatient->SetFileName(arrayS->GetValue(position));
     readerInfoPatient->SetImageIO(dicomIO);
     readerInfoPatient->Update();
 
-    std::string tagvalue;
-    dicomIO->GetValueFromTag("0010|0010",tagvalue);
+    QString filename ="/home/tomasz/Pulpit/Projekty/ExperimenatalPool/QtDCMSeriesDisplayWithTag/Test.txt"; 
+    QFile file(filename);
+    if(!file.open(QFile::ReadOnly|QFile::Text))
+    {
+	qDebug()<<"Could not open file";
+	return;
+    }
+    QTextStream in(&file);
+    while(!in.atEnd())
+    {
+	QString line=in.readLine();
+	QStringList fields=line.split(' ');
+	
+	//qDebug()<<line;
+	std::string firstPos = fields.takeFirst().toUtf8().constData();
+	std::string lastPos = fields.takeLast().toUtf8().constData();
+	std::string tagvalue;
+	std::cout<<firstPos<<" "<<(FindDicomTag(lastPos,dicomIO))<<std::endl;
+    }
+    file.close();
+    /*std::string tagvalue;
+    
     std::string patientName=tagvalue;
     std::string patientID =FindDicomTag("0010|0020",dicomIO);
     std::string patientSex =FindDicomTag("0010|0040",dicomIO);
@@ -137,7 +159,7 @@ void MainWindow::readPatientInformation(int position)
 
     std::cout<<"Patient Name "<<patientName<<std::endl;
     std::cout<<"Patient ID "<<patientID<<std::endl;
-    std::cout<<"Patient Sex "<<patientSex<<std::endl;
+    std::cout<<"Patient Sex "<<patientSex<<std::endl;*/
 }
 
 void MainWindow::on_btnOpenDCMFolder_clicked()
