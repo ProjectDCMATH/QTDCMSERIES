@@ -33,11 +33,10 @@ MainWindow::MainWindow(QWidget *parent) :
     convertITKLuminanceFilter =vtkSmartPointer<vtkImageLuminance>::New();
     readImageData=vtkSmartPointer<vtkImageData>::New();
     
-    //TagDialog *externalTagDialog= new TagDialog;
-    //connect(SedSignalToQDialog(),SIGNAL(SentSignal()),externalTagDialog,SLOT(RecSignalFromMainWindow()));
-    SedSignalToQDialog();
-    //viewTagWindow.setModal(false);
-    //viewTagWindow.show();
+    TagDialog *externalTagDialog= new TagDialog(this);
+     connect(this,SIGNAL(SentSignal(std::string,std::string)),externalTagDialog,SLOT(RecSignalFromMainWindowTag(std::string,std::string)));
+    externalTagDialog->setModal(false);
+    externalTagDialog->show();
 }
 
 MainWindow::~MainWindow()
@@ -143,12 +142,12 @@ void MainWindow::readPatientInformation(int position)
 	//qDebug()<<line;
 	std::string firstPos = fields.takeFirst().toUtf8().constData();
 	std::string lastPos = fields.takeLast().toUtf8().constData();
-	std::string tagvalue;
-	std::cout<<firstPos<<" "<<(FindDicomTag(lastPos,dicomIO))<<std::endl;
+	//std::string tagvalue;
+	//std::cout<<firstPos<<" "<<(FindDicomTag(lastPos,dicomIO))<<std::endl;
+	SentSignal(firstPos,FindDicomTag(lastPos,dicomIO));
     }
     file.close();
-    /*std::string tagvalue;
-    
+    /*
     std::string patientName=tagvalue;
     std::string patientID =FindDicomTag("0010|0020",dicomIO);
     std::string patientSex =FindDicomTag("0010|0040",dicomIO);
@@ -179,9 +178,9 @@ std::string MainWindow::FindDicomTag(const std::string & entryId, const itk::GDC
 {
 
 	std::string tagvalue;
-	std::cout<<entryId<<std::endl;
+	//std::cout<<entryId<<std::endl;
 	bool found = dicomIO->GetValueFromTag(entryId, tagvalue);
-	std::cout<<dicomIO->GetValueFromTag(entryId, tagvalue)<<std::endl;
+	//std::cout<<dicomIO->GetValueFromTag(entryId, tagvalue)<<std::endl;
 	if(!found)
 	{
 	    tagvalue="NOT FOUND";
@@ -189,11 +188,10 @@ std::string MainWindow::FindDicomTag(const std::string & entryId, const itk::GDC
 	return tagvalue;
 }
 
-void MainWindow::SedSignalToQDialog()
+void MainWindow::SentSignalToTag()
 {
     qDebug()<<"Inside SedSignalToQDialog";
-    TagDialog *externalTagDialog= new TagDialog(this);
 //    connect(SedSignalToQDialog(),SIGNAL(SentSignal),externalTagDialog,SLOT(RecSignalFromMainWindow()));
-    externalTagDialog->setModal(false);
-    externalTagDialog->show();
+
+    
 }

@@ -1,1 +1,5 @@
+PatientID 0010|0020
 PatientSex 0010|0040
+PatientAge 0010|1010
+PatientDate 0008|0020
+Modality 0009|0060

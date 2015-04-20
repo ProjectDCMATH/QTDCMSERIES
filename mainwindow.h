@@ -41,7 +41,7 @@ private slots:
     void readPatientInformation(int position);
     void on_hSliderDCM_sliderMoved(int position);
     std::string FindDicomTag(const std::string & entryId, const itk::GDCMImageIO::Pointer dicomIO);
-    void SedSignalToQDialog();
+    void SentSignalToTag();
 
 private:
     Ui::MainWindow *ui;
@@ -62,7 +62,7 @@ private:
     int mMaxSliderX;
 
 signals:
-    void SentSignal();
+    void SentSignal(std::string,std::string);
 };
 
 #endif // MAINWINDOW_H

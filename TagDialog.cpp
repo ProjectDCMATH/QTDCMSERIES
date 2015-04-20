@@ -4,6 +4,7 @@
 #include <QStringListModel>
 #include <QAbstractItemView>
 #include <QDebug>
+#include <iostream>
 
 TagDialog::TagDialog(QWidget *parent):
     QDialog(parent),ui(new Ui::TagDialog)
@@ -28,12 +29,8 @@ TagDialog::~TagDialog()
     delete ui;
 }
 
-void TagDialog::RecSignalFromMainWindow()
+void TagDialog::RecSignalFromMainWindowTag(std::string fMsgTag,std::string sMsgTag)
 {
-    qDebug()<<"Inside RecSignalFromMainWindow";
-    QStringList List;
-    QStringListModel *model;
-    List<<"Hello Tom";
-    model->setStringList(List);
-    ui->listView->setModel(model);
+    ui->listWidget->addItem(fMsgTag.c_str());
+    ui->listWidget->addItem(sMsgTag.c_str());
 }

@@ -21,7 +21,7 @@ class TagDialog:public QDialog
 	private:
 	Ui::TagDialog *ui;
 	public slots:
-	void RecSignalFromMainWindow();
+	void RecSignalFromMainWindowTag(std::string,std::string);
 
 };
 
