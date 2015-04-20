@@ -11,6 +11,7 @@
 #include <vtkActor2D.h>
 #include <vtkTextProperty.h>
 #include <vtkTextMapper.h>
+#include <gdcmIPPSorter.h>
 
 #include <QString>
 #include <QFileDialog>
@@ -49,13 +50,27 @@ void MainWindow::openDCMFolder()
     dir=QFileDialog::getExistingDirectory(this,tr("Open DCM Folder"),QDir::currentPath(),QFileDialog::ShowDirsOnly);
     QFileInfoList list=dir.entryInfoList(QDir::Dirs|QDir::Files|QDir::NoDotAndDotDot);
 
-    std::vector<std::string> names;
+    //IPPSorter
+
+    gdcm::Directory tempDirectory;
+    tempDirectory.Load(dir.absolutePath().toStdString());
+    gdcm::Directory::FilenamesType const &gdcmFiles= tempDirectory.GetFilenames();
+    gdcm::IPPSorter sortDCM;
+    sortDCM.SetComputeZSpacing(true);
+    sortDCM.SetZSpacingTolerance(1e-3);
+    bool b = sortDCM.Sort(gdcmFiles);
+    if(!b) std::cout<<"Failed sorting "<<tempDirectory<<std::endl;
+    double ippzspacingcount=sortDCM.GetZSpacing();
+    std::cout<<ippzspacingcount<<" Test IPPSorting"<<std::endl;
+
+    std::vector<std::string> names=sortDCM.GetFilenames();
+    /*std::vector<std::string> names;
     foreach(QFileInfo finfo,list)
     {
 	std::string str=dir.path().toUtf8().constData();
 	str=str+"/";
 	names.push_back(str+finfo.fileName().toUtf8().constData());
-    }
+    }*/
     drawDCM(names);
 }
 
